@@ -20,7 +20,7 @@ import google.generativeai as genai
 router = Router()
 load_dotenv()
 genai.configure(api_key=os.getenv('AI_TOKEN'))
-model = genai.GenerativeModel('gemini-1.5-pro-latest')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 
 async def remove_markdown(text):
