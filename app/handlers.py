@@ -87,3 +87,4 @@ async def ai(message: Message, state: FSMContext):
         await message.answer('Ошибка при генерации ответа. Попробуй позже.')
 
     await state.set_state(Ai.question)
+
