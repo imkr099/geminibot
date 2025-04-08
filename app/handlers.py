@@ -70,19 +70,20 @@ async def answer(message: Message):
     await message.answer('Притормози, я еще не ответил на твой предыдущий запрос-_-')
 
 
-@router.message(Ai.question)
 @router.message(F.text)
+@router.message(Ai.question)
 async def ai(message: Message, state: FSMContext):
     await state.set_state(Ai.answer)
+
+    data = await state.get_data()
+    history = data.get('history', [])
     try:
-        chat = await state.get_data()['context']
-        if len(chat.history) > 15:
-            chat = model.start_chat(history=[])
+        chat = model.start_chat(history=history)
         response = await chat.send_message_async(message.text)
-        await state.update_data(context=chat)
-    except:
-        chat = model.start_chat(history=[])
-        response = await chat.send_message_async(message.text)
-        await state.update_data(context=chat)
-    await message.answer(response.text)
+        await state.update_data(history=chat.history)
+        await message.answer(response.text)
+    except Exception as e:
+        print(e)
+        await message.answer('Ошибка при генерации ответа. Попробуй позже.')
+
     await state.set_state(Ai.question)
